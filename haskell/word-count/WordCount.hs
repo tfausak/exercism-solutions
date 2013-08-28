@@ -1,7 +1,7 @@
 module WordCount (wordCount) where
 
-import Data.Map (Map, fromListWith)
 import Data.Char (isAlphaNum, isSpace, toLower)
+import Data.Map (Map, fromListWith)
 
 wordCount :: String -> Map String Int
 wordCount s = fromListWith (+) $ zip (tokenize s) (repeat 1)
