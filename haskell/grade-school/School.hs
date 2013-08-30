@@ -9,24 +9,20 @@ module School
 import qualified Data.Map as Map
 import Data.List (sort)
 
-type School = [(Grade, [Name])]
+type School = Map.Map Grade [Name]
 type Grade = Int
 type Name = String
 
 add :: Grade -> Name -> School -> School
-add g n s = Map.toList s'' where
-  s'' = Map.insertWith (++) g [n] s'
-  s' = Map.fromList s
+add g n = Map.insertWith (++) g [n]
 
 empty :: School
-empty = []
+empty = Map.empty
 
 grade :: Grade -> School -> [String]
-grade g s = Map.findWithDefault [] g s' where
-  s' = Map.fromList s
+grade = Map.findWithDefault []
 
-sorted :: School -> School
-sorted s = map f s'' where
+sorted :: School -> [(Grade, [Name])]
+sorted s = map f s' where
   f (g, ns) = (g, sort ns)
-  s'' = Map.toAscList s'
-  s' = Map.fromList s
+  s' = Map.toAscList s
