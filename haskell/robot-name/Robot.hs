@@ -4,26 +4,26 @@ module Robot
 , robotName
 ) where
 
-import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, readMVar, tryTakeMVar)
-import System.Random (newStdGen, randomRs)
+import GHC.Conc (TVar, atomically, newTVar, readTVar, writeTVar)
+import System.Random (randomRIO)
 
-data Robot = Robot (MVar String)
+data Robot = Robot (TVar String)
 
 mkRobot :: IO Robot
 mkRobot = do
-  var <- newEmptyMVar
+  var <- atomically $ newTVar ""
   let robot = Robot var
   resetName robot
   return robot
 
 resetName :: Robot -> IO ()
 resetName (Robot var) = do
-  gen <- newStdGen
-  let letters = take 2 (randomRs ('A', 'Z') gen)
-  gen <- newStdGen
-  let numbers = take 3 (randomRs ('0', '9') gen)
-  tryTakeMVar var
-  putMVar var $ letters ++ numbers
+  a <- randomRIO ('A', 'Z')
+  b <- randomRIO ('A', 'Z')
+  c <- randomRIO ('0', '9')
+  d <- randomRIO ('0', '9')
+  e <- randomRIO ('0', '9')
+  atomically $ writeTVar var [a, b, c, d, e]
 
 robotName :: Robot -> IO String
-robotName (Robot var) = readMVar var
+robotName (Robot var) = atomically $ readTVar var
