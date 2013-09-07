@@ -4,7 +4,7 @@ import Control.Concurrent.STM (TVar, atomically, newTVar, readTVar, writeTVar)
 import Control.Monad (liftM)
 import System.Random (randomRIO)
 
-data Robot = Robot (TVar String)
+newtype Robot = Robot (TVar String)
 
 mkName :: IO String
 mkName = mapM randomRIO pattern where
