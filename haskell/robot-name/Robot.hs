@@ -1,29 +1,22 @@
-module Robot
-( mkRobot
-, resetName
-, robotName
-) where
+module Robot (mkRobot, resetName, robotName) where
 
-import GHC.Conc (TVar, atomically, newTVar, readTVar, writeTVar)
+import Control.Concurrent.STM (TVar, atomically, newTVar, readTVar, writeTVar)
+import Control.Monad (liftM)
 import System.Random (randomRIO)
 
 data Robot = Robot (TVar String)
 
+mkName :: IO String
+mkName = mapM randomRIO pattern where
+  pattern = [letter, letter, number, number, number]
+  letter = ('A', 'Z')
+  number = ('0', '9')
+
 mkRobot :: IO Robot
-mkRobot = do
-  var <- atomically $ newTVar ""
-  let robot = Robot var
-  resetName robot
-  return robot
+mkRobot = liftM Robot $ mkName >>= atomically . newTVar
 
 resetName :: Robot -> IO ()
-resetName (Robot var) = do
-  a <- randomRIO ('A', 'Z')
-  b <- randomRIO ('A', 'Z')
-  c <- randomRIO ('0', '9')
-  d <- randomRIO ('0', '9')
-  e <- randomRIO ('0', '9')
-  atomically $ writeTVar var [a, b, c, d, e]
+resetName (Robot var) = mkName >>= atomically . writeTVar var
 
 robotName :: Robot -> IO String
 robotName (Robot var) = atomically $ readTVar var
