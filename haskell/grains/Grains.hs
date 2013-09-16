@@ -7,4 +7,4 @@ square :: Int -> Integer
 square n = 2 ^ (n - 1)
 
 total :: Integer
-total = sum $ map square [1..64]
+total = 2 ^ 64 - 1
