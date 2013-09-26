@@ -11,6 +11,5 @@ primeFactors = f divisors where
             then d : f ds q
             else f ds' n
         where
-            d = head ds
-            ds' = tail ds
+            (d : ds') = ds
             (q, r) = quotRem n d
