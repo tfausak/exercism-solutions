@@ -19,7 +19,7 @@ data Allergen = Eggs
 allergies :: Int -> [Allergen]
 allergies score = filter isAllergicTo' allergens where
     isAllergicTo' = flip isAllergicTo score
-    allergens = enumFrom minBound
+    allergens = [minBound..]
 
 isAllergicTo :: Allergen -> Int -> Bool
 isAllergicTo allergen score = testBit score $ fromEnum allergen
