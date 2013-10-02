@@ -12,20 +12,17 @@ import Data.List.Split (chunksOf)
 ciphertext :: String -> String
 ciphertext = f . plaintextSegments where
     f [] = []
-    f xs = map head xs' ++ f (map tail xs') where
-        xs' = filter (not . null) xs
+    f segments = map head segments' ++ f (map tail segments') where
+        segments' = filter (not . null) segments
 
 normalizeCiphertext :: String -> String
-normalizeCiphertext = unwords . segments . ciphertext
+normalizeCiphertext = unwords . chunksOf 5 . ciphertext
 
 normalizePlaintext :: String -> String
 normalizePlaintext = map toLower . filter isAlphaNum
 
 plaintextSegments :: String -> [String]
-plaintextSegments = segments . normalizePlaintext
-
-segments :: String -> [String]
-segments = chunksOf =<< squareSize
+plaintextSegments = (chunksOf =<< squareSize) . normalizePlaintext
 
 squareSize :: String -> Int
 squareSize = ceiling . sqrt . fromIntegral . length
