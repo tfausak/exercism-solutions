@@ -36,11 +36,11 @@ defaultGarden = garden
 garden :: [String] -> String -> Garden
 garden students grid = fromList (zip (sort students) (transform grid)) where
     transform = map (map plant . concat) . transpose . map (chunksOf 2) . lines
-    plant letter
-        | letter == 'C' = Clover
-        | letter == 'G' = Grass
-        | letter == 'R' = Radishes
-        | letter == 'V' = Violets
+    plant letter = case letter of
+        'C' -> Clover
+        'G' -> Grass
+        'R' -> Radishes
+        'V' -> Violets
 
 lookupPlants :: String -> Garden -> [Plant]
 lookupPlants = findWithDefault []
