@@ -15,7 +15,7 @@ data Bearing = North
              | East
              | South
              | West
-             deriving (Eq, Show)
+             deriving (Bounded, Enum, Eq, Show)
 
 data Robot = Robot
     { bearing :: Bearing
@@ -43,16 +43,13 @@ simulate r (x:xs) = simulate r' xs where
     left = mkRobot (turnLeft (bearing r)) (coordinates r)
     right = mkRobot (turnRight (bearing r)) (coordinates r)
 
+turn :: Int -> Bearing -> Bearing
+turn x b = toEnum $ a `mod` n where
+    a = x + fromEnum b
+    n = 1 + fromEnum (maxBound :: Bearing)
+
 turnLeft :: Bearing -> Bearing
-turnLeft b = case b of
-    North -> West
-    West  -> South
-    South -> East
-    East  -> North
+turnLeft = turn (-1)
 
 turnRight :: Bearing -> Bearing
-turnRight b = case b of
-    North -> East
-    East  -> South
-    South -> West
-    West  -> North
+turnRight = turn 1
