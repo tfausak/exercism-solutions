@@ -9,34 +9,28 @@ module BST
 ) where
 
 import Data.List (foldl')
+import Data.Maybe (fromJust)
 
-data Tree a = Empty | Node a (Tree a) (Tree a)
-  deriving (Show)
-
-bstLeft :: Tree a -> Maybe (Tree a)
-bstLeft Empty = Nothing
-bstLeft (Node _ l _) = Just l
-
-bstRight :: Tree a -> Maybe (Tree a)
-bstRight Empty = Nothing
-bstRight (Node _ _ r) = Just r
-
-bstValue :: Tree a -> a
-bstValue Empty = undefined
-bstValue (Node n _ _) = n
+data Tree a = Node { bstValue :: a
+                   , bstLeft  :: Maybe (Tree a)
+                   , bstRight :: Maybe (Tree a)
+                   } deriving (Show)
 
 fromList :: Ord a => [a] -> Tree a
-fromList = foldl' (flip insert) Empty
+fromList [] = undefined
+fromList (x:xs) = foldl' (flip insert) (singleton x) xs
 
 insert :: Ord a => a -> Tree a -> Tree a
-insert x Empty = singleton x
-insert x (Node n l r)
-  | x > n = Node n l (insert x r)
-  | otherwise = Node n (insert x l) r
+insert x t = insert' x (Just t) where
+  insert' x Nothing = singleton x
+  insert' x (Just (Node y l r))
+    | x > y     = Node y l (Just (insert' x r))
+    | otherwise = Node y (Just (insert' x l)) r
 
 singleton :: a -> Tree a
-singleton x = Node x Empty Empty
+singleton x = Node x Nothing Nothing
 
 toList :: Tree a -> [a]
-toList Empty = []
-toList (Node n l r) = toList l ++ [n] ++ toList r
+toList t = toList' (Just t) where
+  toList' Nothing = []
+  toList' (Just (Node x l r)) = toList' l ++ [x] ++ toList' r
