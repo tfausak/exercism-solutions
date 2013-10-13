@@ -8,7 +8,7 @@ difference :: Integral a => a -> a
 difference n = squareOfSums n - sumOfSquares n
 
 squareOfSums :: Integral a => a -> a
-squareOfSums = (^ 2) . sum . enumFromTo 1
+squareOfSums n = ((n * (n + 1)) `div` 2) ^ 2
 
 sumOfSquares :: Integral a => a -> a
-sumOfSquares = sum . map (^ 2) . enumFromTo 1
+sumOfSquares n = (n * (n + 1) * (2 * n + 1)) `div` 6
