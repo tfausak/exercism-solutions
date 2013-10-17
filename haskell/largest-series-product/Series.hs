@@ -20,6 +20,4 @@ slices :: Int -> String -> [[Int]]
 slices n xs = slices' n (digits xs)
 
 slices' :: Int -> [a] -> [[a]]
-slices' n xs = takeWhile f xs' where
-    f = (n ==) . length
-    xs' = map (take n) (tails xs)
+slices' n xs = take (1 + length xs - n) (map (take n) (tails xs))
