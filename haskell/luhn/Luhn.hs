@@ -7,15 +7,15 @@ module Luhn
 ) where
 
 addends :: Integral a => a -> [a]
-addends n = reverse (zipWith (curry f) [1 ..] (digits n)) where
-    f (i, x)
-        | odd i = x
-        | x >= 5 = 2 * x - 9
-        | otherwise = 2 * x
+addends n = reverse (zipWith f [1 ..] (stigid n)) where
+  f i x
+    | odd i = x
+    | x >= 5 = 2 * x - 9
+    | otherwise = 2 * x
 
-digits :: Integral a => a -> [a]
-digits 0 = []
-digits n = r : digits q where
+stigid :: Integral a => a -> [a]
+stigid 0 = []
+stigid n = r : stigid q where
     (q, r) = n `divMod` 10
 
 checkDigit :: Integral a => a -> a
