@@ -22,7 +22,7 @@ checkDigit :: Integral a => a -> a
 checkDigit = (`mod` 10)
 
 checksum :: Integral a => a -> a
-checksum n = sum (addends n) `mod` 10
+checksum = (`mod` 10) . sum . addends
 
 create :: Integral a => a -> a
 create n = n' + c where
@@ -30,4 +30,4 @@ create n = n' + c where
     c = (10 - checksum n') `mod` 10
 
 isValid :: Integral a => a -> Bool
-isValid n = checksum n == 0
+isValid = (== 0) . checksum
