@@ -14,44 +14,53 @@ module Matrix
 
 import qualified Data.Vector as V
 
-type Matrix a = V.Vector (V.Vector a)
+data Matrix a = Matrix
+    { cells :: V.Vector a
+    , rows :: Int
+    , cols :: Int
+    } deriving (Eq, Show)
 
-fromString :: Read a => String -> Matrix a
-fromString s = fromList $ map f $ lines s where
-    f l = if null r then [] else fst (head r) : f (snd (head r)) where
-        r = reads l
+column :: Int -> Matrix a -> V.Vector a
+column n m = V.ifilter inColumn $ flatten m where
+    inColumn i _ = i `mod` c == n
+    c = cols m
+
+flatten :: Matrix a -> V.Vector a
+flatten = cells
 
 fromList :: [[a]] -> Matrix a
-fromList = V.fromList . map V.fromList
+fromList xs = Matrix
+    { cells = V.fromList (concat xs)
+    , rows = length xs
+    , cols = if null xs then 0 else length $ head xs
+    }
+
+fromString :: (Read a) => String -> Matrix a
+fromString s = fromList $ map convert $ lines s where
+    convert line = if null r
+        then []
+        else h : convert t
+        where
+            r = reads line
+            (h, t) = head r
+
+reshape :: (Int, Int) -> Matrix a -> Matrix a
+reshape (r, c) m = Matrix
+    { cells = flatten m
+    , rows = r
+    , cols = c
+    }
+
+row :: Int -> Matrix a -> V.Vector a
+row n m = V.take c $ V.drop (n * c) (flatten m) where
+    c = cols m
 
 shape :: Matrix a -> (Int, Int)
 shape m = (rows m, cols m)
 
-rows :: Matrix a -> Int
-rows = V.length
-
-cols :: Matrix a -> Int
-cols m
-    | V.null m = 0
-    | otherwise = V.length (V.head m)
-
 transpose :: Matrix a -> Matrix a
-transpose m = V.fromList $ map (`column` m) [0 .. cols m - 1]
-
-row :: Int -> Matrix a -> V.Vector a
-row = flip (V.!)
-
-column :: Int -> Matrix a -> V.Vector a
-column = V.map . flip (V.!)
-
-reshape :: (Int, Int) -> Matrix a -> Matrix a
-reshape (_, y) m = chunks y $ flatten m
-
-flatten :: Matrix a -> V.Vector a
-flatten = V.concat . V.toList
-
-chunks :: Int -> V.Vector a -> V.Vector (V.Vector a)
-chunks n xs
-    | n < 1 || V.null xs = V.empty
-    | otherwise = h `V.cons` chunks n t where
-        (h, t) = V.splitAt n xs
+transpose m = Matrix
+    { cells = V.concat $ map (`column` m) [0 .. cols m - 1]
+    , rows = cols m
+    , cols = rows m
+    }
