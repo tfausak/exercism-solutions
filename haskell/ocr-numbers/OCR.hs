@@ -3,11 +3,12 @@ module OCR
 ) where
 
 import Prelude hiding (lookup)
+import Data.List (intercalate)
 import Data.Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe)
 
 convert :: String -> String
-convert s = map (map lookupDigit) (tokenize s) `join` ","
+convert s = intercalate "," (map (map lookupDigit) (tokenize s))
 
 -- Convert a 3x4 string into the digit it represents, or '?' if it's garbled.
 lookupDigit :: String -> Char
@@ -23,12 +24,6 @@ chunks :: Int -> [a] -> [[a]]
 chunks _ [] = []
 chunks n xs = chunk : chunks n xs' where
     (chunk, xs') = splitAt n xs
-
--- Join a list with a separator.
-join :: [[a]] -> [a] -> [a]
-[] `join` _ = []
-[x] `join` _ = x
-(x:xs) `join` s = concat [x, s, xs `join` s]
 
 -- Transpose a list of lists as if they were a matrix.
 transpose :: [[a]] -> [[a]]
