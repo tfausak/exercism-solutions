@@ -9,18 +9,19 @@ import Data.Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe)
 
 convert :: String -> String
-convert s = intercalate "," (map (map lookupDigit) (tokenize s))
+convert = intercalate "," . map lookupDigits . tokenize
 
--- Convert a 3x4 string into the digit it represents, or '?' if it's garbled.
-lookupDigit :: String -> Char
-lookupDigit s = fromMaybe '?' (lookup s digits)
-
--- Convert a string into a list of lists of 3x4 strings. Each inner list
--- represents one "line" of input.
 tokenize :: String -> [[String]]
-tokenize s = map (map unlines . transpose) (chunksOf 4 (map (chunksOf 3) (lines s)))
+tokenize s = map f xs where
+    f = map unlines . transpose
+    xs = chunksOf 4 $ map (chunksOf 3) (lines s)
 
--- Grid of 3x4 strings mapped to their corresponding digits.
+lookupDigits :: [String] -> String
+lookupDigits = map lookupDigit
+
+lookupDigit :: String -> Char
+lookupDigit = fromMaybe '?' . flip lookup digits
+
 digits :: Map String Char
 digits = fromList
     [ (" _ \n| |\n|_|\n   \n", '0')
