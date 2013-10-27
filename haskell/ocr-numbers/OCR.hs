@@ -4,6 +4,7 @@ module OCR
 
 import Prelude hiding (lookup)
 import Data.List (intercalate)
+import Data.List.Split (chunksOf)
 import Data.Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe)
 
@@ -17,13 +18,7 @@ lookupDigit s = fromMaybe '?' (lookup s digits)
 -- Convert a string into a list of lists of 3x4 strings. Each inner list
 -- represents one "line" of input.
 tokenize :: String -> [[String]]
-tokenize s = map (map unlines . transpose) (chunks 4 (map (chunks 3) (lines s)))
-
--- Split a list into chunks of the given size.
-chunks :: Int -> [a] -> [[a]]
-chunks _ [] = []
-chunks n xs = chunk : chunks n xs' where
-    (chunk, xs') = splitAt n xs
+tokenize s = map (map unlines . transpose) (chunksOf 4 (map (chunksOf 3) (lines s)))
 
 -- Transpose a list of lists as if they were a matrix.
 transpose :: [[a]] -> [[a]]
