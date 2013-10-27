@@ -3,7 +3,7 @@ module OCR
 ) where
 
 import Prelude hiding (lookup)
-import Data.List (intercalate)
+import Data.List (intercalate, transpose)
 import Data.List.Split (chunksOf)
 import Data.Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe)
@@ -19,12 +19,6 @@ lookupDigit s = fromMaybe '?' (lookup s digits)
 -- represents one "line" of input.
 tokenize :: String -> [[String]]
 tokenize s = map (map unlines . transpose) (chunksOf 4 (map (chunksOf 3) (lines s)))
-
--- Transpose a list of lists as if they were a matrix.
-transpose :: [[a]] -> [[a]]
-transpose xs
-    | any (not . null) xs = map head xs : transpose (map tail xs)
-    | otherwise = []
 
 -- Grid of 3x4 strings mapped to their corresponding digits.
 digits :: Map String Char
