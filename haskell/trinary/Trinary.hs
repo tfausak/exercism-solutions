@@ -5,18 +5,21 @@ module Trinary
 
 import Data.List (foldl')
 
+offset :: (Integral a) => a
+offset = fromIntegral $ fromEnum '0'
+
 readTri :: (Integral a) => String -> a
 readTri = readIntegral fromBase 3 where
-    fromBase = subtract 48 . fromIntegral . fromEnum
+    fromBase = subtract offset . fromIntegral . fromEnum
+
+showTri :: (Integral a) => a -> String
+showTri = showIntegral toBase 3 where
+    toBase = toEnum . (offset +) . fromIntegral
 
 readIntegral :: (Integral a) => (Char -> a) -> a -> String -> a
 readIntegral fromBase radix string = foldl' accumulate 0 values where
     accumulate number digit = number * radix + digit
     values = map fromBase string
-
-showTri :: (Integral a) => a -> String
-showTri = showIntegral toBase 3 where
-    toBase = toEnum . (48 +) . fromIntegral
 
 showIntegral :: (Integral a) => (a -> Char) -> a -> a -> String
 showIntegral = ((reverse .) .) . showIntegral'
