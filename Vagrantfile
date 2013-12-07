@@ -13,7 +13,7 @@ Vagrant.configure('2') do |config|
   config.vm.provision 'shell', inline: <<-'SHELL', privileged: false
     set -e -v
     touch .hushlogin
-    echo 'PATH="$HOME/.cabal/bin:$PATH"' > .bash_profile
+    echo 'PATH="$HOME/bin:$HOME/.cabal/bin:$PATH"' > .bash_profile
     mkdir -p bin
     wget --no-clobber --quiet github.com/exercism/cli/releases/download/v1.3.1/exercism-linux-amd64.tgz
     test -f exercism-linux-amd64.tar || zcat exercism-linux-amd64.tgz > exercism-linux-amd64.tar
